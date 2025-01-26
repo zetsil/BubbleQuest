@@ -13,6 +13,9 @@ public class TurnManager : MonoBehaviour
     public Button noButton;
     public GameObject endFishDialogPanel; // The panel to show
 
+    [SerializeField] 
+    private TMP_Text resultsText; // Reference to the results text
+
     private int currentTurn = 0;
     private List<GameObject> spawnedFish = new List<GameObject>();
     private List<GameObject> acceptedFish = new List<GameObject>(); // List of accepted fish
@@ -127,6 +130,12 @@ public class TurnManager : MonoBehaviour
 
     public void StartNewTurn()
     {
+         if (currentTurn > 4)
+        {
+            EndGame(); // Stop the game and show the results
+            return;
+        }
+
         currentTurn++;
         Debug.Log("Starting Turn: " + currentTurn);
 
@@ -268,6 +277,35 @@ public class TurnManager : MonoBehaviour
                 Debug.LogError("FishScript component not found on " + fishObject.name);
             }
         }
+    }
+
+
+   private void EndGame()
+    {
+        Debug.Log("Game Over! You Win!");
+
+        if (endFishDialogPanel != null)
+        {
+            endFishDialogPanel.SetActive(true); // Use the existing dialog panel to show results
+                // Hide buttons
+            yesButton.gameObject.SetActive(false);
+            noButton.gameObject.SetActive(false);
+            resultsText.gameObject.SetActive(true);
+
+            if (resultsText != null)
+            {
+                resultsText.text = $"You Win!\n\nFinal Stats:\n" +
+                                $"Bubbles: {money}\n" +
+                                $"Happiness: {happiness}%\n" +
+                                $"Harmony: {harmony}";
+            }
+            else
+            {
+                Debug.LogError("ResultsText is not assigned in the Inspector!");
+            }
+        }
+
+        Time.timeScale = 0; // Stop the game
     }
 
     
